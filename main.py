@@ -8,12 +8,12 @@ class Grid:
     COLOR_BACKGROUND = (180, 180, 180)
     COLOR_TEXT = (0, 0, 0)
 
-    def __init__(self, pos: tuple, value: int = 0):
+    def __init__(self, pos: tuple, value: int = None):
         self.SURFACE = pygame.Surface((self.SIZE, self.SIZE))
         self.col, self.row = pos
         self.position = (self.col, self.row)
         self.box = self.parse_box()
-        self.value = None if value == 0 else value
+        self.value = None
         self.coordinates = ((self.col-1)*self.SIZE, (self.row-1)*self.SIZE)
 
     def __repr__(self) -> str:
@@ -28,7 +28,7 @@ class Grid:
     def draw(self, surface: pygame.Surface):
         """Blits value onto self, then is blitted to surface (Board)"""
         font = pygame.font.SysFont('Consolas', Grid.SIZE // 2)
-        text = font.render(f"{self.value}", True, self.COLOR_TEXT)
+        text = font.render(f"{self.value if self.value else ' '}", True, self.COLOR_TEXT)
         text_rect = text.get_rect()
         text_rect.centerx = self.SURFACE.get_rect().centerx
         text_rect.centery = self.SURFACE.get_rect().centery
@@ -52,7 +52,7 @@ class Board:
 
     def __init__(self):
         self.SURFACE = pygame.Surface((self.WIDTH + self.WIDTH_LINE, self.HEIGHT + self.WIDTH_LINE))
-        self.grids = [Grid((i, j), i) for i in range(1, 10) for j in range(1, 10)]
+        self.grids = [Grid((i, j)) for i in range(1, 10) for j in range(1, 10)]
         self.vertical_lines = [((i * Grid.SIZE, 0), (i * Grid.SIZE, self.HEIGHT)) for i in range(10)]
         self.horizontal_lines = [((0, i * Grid.SIZE), (self.WIDTH, i * Grid.SIZE)) for i in range(10)]
 
@@ -128,7 +128,24 @@ class Window:
                 mouse_pos = pygame.mouse.get_pos()
                 # checks if mouse clicked in board
                 if self.game.board.collide(mouse_pos):
-                    print(self.game.board.collide_grid(mouse_pos))
+                    grid = self.game.board.collide_grid(mouse_pos)
+                    if event.button == 1:
+                        grid.value = self.game.current_value
+                    elif event.button == 3:
+                        grid.value = None
+
+            if keys[pygame.K_0]:
+                self.game.current_value = None
+            elif keys[pygame.K_1]:
+                self.game.current_value = 1
+            elif keys[pygame.K_2]:
+                self.game.current_value = 2
+            elif keys[pygame.K_3]:
+                self.game.current_value = 3
+            elif keys[pygame.K_4]:
+                self.game.current_value = 4
+            elif keys[pygame.K_5]:
+                self.game.current_value = 5
 
         return True
 
