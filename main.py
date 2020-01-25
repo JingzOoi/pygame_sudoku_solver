@@ -5,7 +5,7 @@ class Grid:
     """A space on a Sudoku board. Holds a value unique to row, column, and box."""
 
     SIZE = 50
-    COLOR_BACKGROUND = (180, 180, 180)
+    COLOR_BACKGROUND = (255, 255, 255)
     COLOR_TEXT = (0, 0, 0)
 
     def __init__(self, pos: tuple, value: int = None):
@@ -13,7 +13,7 @@ class Grid:
         self.col, self.row = pos
         self.position = (self.col, self.row)
         self.box = self.parse_box()
-        self.value = None
+        self.value = value
         self.coordinates = ((self.col-1)*self.SIZE, (self.row-1)*self.SIZE)
 
     def __repr__(self) -> str:
@@ -104,6 +104,15 @@ class Game:
         self.current_value = num if 0 < num < 10 else 1
         print(f"Current selected value held by mouse set to {self.current_value}.")
 
+    def draw(self, surface: pygame.Surface):
+        """Draws game elements and board"""
+        self.board.draw(surface)
+        g = Grid((0, 0), self.current_value)
+        x = Grid.SIZE
+        y = self.board.BOTTOM + Grid.SIZE // 2
+        g.coordinates = (x, y)
+        g.draw(surface)
+
 
 class Window:
     """An instance of a running application. Handles events."""
@@ -146,19 +155,27 @@ class Window:
                 self.game.current_value = 4
             elif keys[pygame.K_5]:
                 self.game.current_value = 5
+            elif keys[pygame.K_6]:
+                self.game.current_value = 6
+            elif keys[pygame.K_7]:
+                self.game.current_value = 7
+            elif keys[pygame.K_8]:
+                self.game.current_value = 8
+            elif keys[pygame.K_9]:
+                self.game.current_value = 9
 
         return True
 
     def update(self):
         with self.RENDERER:
-            self.RENDERER.draw_board(self.game.board)
+            self.RENDERER.draw_game(self.game)
             return self.handle_events()
 
 
 class Renderer:
     """An instance of a renderer. Draws everything on the Window."""
 
-    COLOR_BACKGROUND = (255, 255, 255)
+    COLOR_BACKGROUND = (0, 0, 0)
 
     def __init__(self, size: tuple):
         self.SIZE = size
@@ -172,8 +189,8 @@ class Renderer:
     def __exit__(self, exc_type, exc_value, exc_trace):
         pygame.display.update()
 
-    def draw_board(self, board):
-        board.draw(self.DISPLAY)
+    def draw_game(self, game):
+        game.draw(self.DISPLAY)
 
 
 if __name__ == "__main__":
@@ -184,6 +201,3 @@ if __name__ == "__main__":
 
 class GridNotFoundError(Exception):
     """Called when grid is not found in the board."""
-
-    def __init__(self, message):
-        super().__init__(message)
