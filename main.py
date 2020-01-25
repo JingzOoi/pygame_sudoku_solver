@@ -104,6 +104,10 @@ class Game:
         self.current_value = num if 0 < num < 10 else 1
         print(f"Current selected value held by mouse set to {self.current_value}.")
 
+    def clear_grid(self):
+        for grid in self.board:
+            grid.value = None
+
     def draw(self, surface: pygame.Surface):
         """Draws game elements and board"""
         self.board.draw(surface)
@@ -143,6 +147,9 @@ class Window:
                     elif event.button == 3:
                         grid.value = None
 
+            if keys[pygame.K_SPACE]:
+                self.game.clear_grid()
+
             if keys[pygame.K_0]:
                 self.game.current_value = None
             elif keys[pygame.K_1]:
@@ -175,7 +182,7 @@ class Window:
 class Renderer:
     """An instance of a renderer. Draws everything on the Window."""
 
-    COLOR_BACKGROUND = (0, 0, 0)
+    COLOR_BACKGROUND = (180, 180, 180)
 
     def __init__(self, size: tuple):
         self.SIZE = size
