@@ -50,4 +50,4 @@ The size of every element depends on the size of the Grids. To change the size o
 
 2. Better user input method: current user input method is a bit incovenient.
 
-3. Separation of the Sudoku classes (Grid, Board, Game) with the pygame classes (Window, Renderer) maybe? For scaling in the future...
+3. ~~Separation of the Sudoku classes (Grid, Board, Game) with the pygame classes (Window, Renderer) maybe? For scaling in the future...~~ Done, but it looks more messy now, shouldn't have done it, might revert.
