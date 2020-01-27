@@ -56,15 +56,15 @@ class Board:
         self.vertical_lines = [((i * Grid.SIZE, 0), (i * Grid.SIZE, self.HEIGHT)) for i in range(10)]
         self.horizontal_lines = [((0, i * Grid.SIZE), (self.WIDTH, i * Grid.SIZE)) for i in range(10)]
 
-    def __getitem__(self, num):
+    def __getitem__(self, num) -> Grid:
         return self.grids[num]
 
-    def collide(self, pos: tuple):
+    def collide(self, pos: tuple) -> bool:
         """Checks if coordinates (from window) given is within the board"""
         x, y = pos
         return self.LEFT <= x <= self.RIGHT and self.TOP <= y <= self.BOTTOM
 
-    def collide_grid(self, pos: tuple):
+    def collide_grid(self, pos: tuple) -> Grid:
         x, y = pos
         board_pos = (x // Grid.SIZE, y // Grid.SIZE)
         for grid in self.grids:
@@ -102,7 +102,6 @@ class Game:
 
     def change_current_value(self, num: int):
         self.current_value = num if 0 < num < 10 else 1
-        print(f"Current selected value held by mouse set to {self.current_value}.")
 
     def clear_grid(self):
         for grid in self.board:
@@ -121,7 +120,7 @@ class Game:
         empty_grids = [grid for grid in self.board if grid.value is None]
         return empty_grids[0] if len(empty_grids) > 0 else None
 
-    def check_valid(self, grid: Grid, num):
+    def check_valid(self, grid: Grid, num) -> bool:
         if not grid.value:
             same_row = [g.value for g in self.board if g.row == grid.row]
             if num in same_row:
@@ -135,7 +134,7 @@ class Game:
             return True
         return False
 
-    def solve(self):
+    def solve(self) -> bool:
         next_empty = self.check_empty()
         if not next_empty:
             return True
@@ -165,7 +164,7 @@ class Window:
         self.RENDERER = Renderer(self.SIZE)
         self.game = Game()
 
-    def handle_events(self):
+    def handle_events(self) -> bool:
         keys = pygame.key.get_pressed()
         for event in pygame.event.get():
             if event.type == pygame.QUIT or keys[pygame.K_ESCAPE]:
@@ -210,7 +209,7 @@ class Window:
 
         return True
 
-    def update(self):
+    def update(self) -> bool:
         with self.RENDERER:
             self.RENDERER.draw_game(self.game)
             return self.handle_events()
