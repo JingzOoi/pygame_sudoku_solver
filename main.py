@@ -52,7 +52,7 @@ class Board:
 
     def __init__(self):
         self.SURFACE = pygame.Surface((self.WIDTH + self.WIDTH_LINE, self.HEIGHT + self.WIDTH_LINE))
-        self.grids = [Grid((i, j)) for i in range(1, 10) for j in range(1, 10)]
+        self.grids = [Grid((i, j)) for j in range(1, 10) for i in range(1, 10)]
         self.vertical_lines = [((i * Grid.SIZE, 0), (i * Grid.SIZE, self.HEIGHT)) for i in range(10)]
         self.horizontal_lines = [((0, i * Grid.SIZE), (self.WIDTH, i * Grid.SIZE)) for i in range(10)]
 
@@ -117,6 +117,40 @@ class Game:
         g.coordinates = (x, y)
         g.draw(surface)
 
+    def check_empty(self):
+        empty_grids = [grid for grid in self.board if grid.value is None]
+        return empty_grids[0] if len(empty_grids) > 0 else None
+
+    def check_valid(self, grid: Grid, num):
+        if not grid.value:
+            same_row = [g.value for g in self.board if g.row == grid.row]
+            if num in same_row:
+                return False
+            same_column = [g.value for g in self.board if g.col == grid.col]
+            if num in same_column:
+                return False
+            same_box = [g.value for g in self.board if g.box == grid.box]
+            if num in same_box:
+                return False
+            return True
+        return False
+
+    def solve(self):
+        next_empty = self.check_empty()
+        if not next_empty:
+            return True
+        else:
+            for i in range(1, 10):
+                if self.check_valid(next_empty, i) is True:
+                    next_empty.value = i
+
+                    if self.solve():
+                        return True
+                    else:
+                        next_empty.value = None
+            else:
+                return False
+
 
 class Window:
     """An instance of a running application. Handles events."""
@@ -149,6 +183,9 @@ class Window:
 
             if keys[pygame.K_SPACE]:
                 self.game.clear_grid()
+
+            if keys[pygame.K_RETURN]:
+                self.game.solve()
 
             if keys[pygame.K_0]:
                 self.game.current_value = None
