@@ -49,3 +49,5 @@ The size of every element depends on the size of the Grids. To change the size o
 1. Error handling: the program stops responding when it tries to solve a board that has incorrect inputs (e.g. same number on same row) by the user. Also needs to catch unsolvable puzzles.
 
 2. Better user input method: current user input method is a bit incovenient.
+
+3. Separation of the Sudoku classes (Grid, Board, Game) with the pygame classes (Window, Renderer) maybe? For scaling in the future...
