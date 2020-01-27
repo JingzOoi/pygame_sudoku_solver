@@ -57,14 +57,16 @@ class Board:
         self.horizontal_lines = [((0, i * Grid.SIZE), (self.WIDTH, i * Grid.SIZE)) for i in range(10)]
 
     def __getitem__(self, num) -> Grid:
+        """Allows slicing."""
         return self.grids[num]
 
     def collide(self, pos: tuple) -> bool:
-        """Checks if coordinates (from window) given is within the board"""
+        """Checks if coordinates (from window) given is within the board."""
         x, y = pos
         return self.LEFT <= x <= self.RIGHT and self.TOP <= y <= self.BOTTOM
 
     def collide_grid(self, pos: tuple) -> Grid:
+        """Returns the grid placed in the coordinates given."""
         x, y = pos
         board_pos = (x // Grid.SIZE, y // Grid.SIZE)
         for grid in self.grids:
@@ -101,9 +103,11 @@ class Game:
         self.current_value = 1
 
     def change_current_value(self, num: int):
+        """Changes the current value held by the mouse button."""
         self.current_value = num if 0 < num < 10 else 1
 
     def clear_grid(self):
+        """Clears all grids on the board."""
         for grid in self.board:
             grid.value = None
 
@@ -117,10 +121,12 @@ class Game:
         g.draw(surface)
 
     def check_empty(self):
+        """Looks for the next empty grid in the board, starting from row."""
         empty_grids = [grid for grid in self.board if grid.value is None]
         return empty_grids[0] if len(empty_grids) > 0 else None
 
     def check_valid(self, grid: Grid, num) -> bool:
+        """Checks if a number can be fit into a grid without collision."""
         if not grid.value:
             same_row = [g.value for g in self.board if g.row == grid.row]
             if num in same_row:
@@ -135,19 +141,25 @@ class Game:
         return False
 
     def solve(self) -> bool:
+        """Solves the game."""
+        # looks for the next empty grid on the board.
         next_empty = self.check_empty()
         if not next_empty:
+            # no empty grid is found == board is completed.
             return True
         else:
+            # there is an empty grid found. Try for numbers.
             for i in range(1, 10):
                 if self.check_valid(next_empty, i) is True:
+                    # if number can be placed in grid, solve the grid using current settings.
                     next_empty.value = i
-
                     if self.solve():
                         return True
                     else:
+                        # some sort of collision is found. Revert to None and continue with for loop.
                         next_empty.value = None
             else:
+                # Exhausted all numbers == some error in the previous grids.
                 return False
 
 
