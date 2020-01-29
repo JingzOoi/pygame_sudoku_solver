@@ -87,6 +87,14 @@ class Game(sudoku.Game):
         super().__init__(Board())
         self.current_value = 1
 
+    @property
+    def candidates(self):
+        candidate_dict = {}
+        for i in range(1, 10):
+            candidate_dict[i] = Grid((0, 0), i)
+            candidate_dict[i].coordinates = (candidate_dict[i].value * Grid.SIZE, self.board.BOTTOM + Grid.SIZE // 2)
+        return candidate_dict
+
     def change_current_value(self, num: int):
         """Changes the current value held by the mouse button."""
         self.current_value = num if 0 < num < 10 else 1
@@ -99,11 +107,12 @@ class Game(sudoku.Game):
     def draw(self, surface: pygame.Surface):
         """Draws game elements and board."""
         self.board.draw(surface)
-        g = Grid((0, 0), self.current_value)
-        x = Grid.SIZE
-        y = self.board.BOTTOM + Grid.SIZE // 2
-        g.coordinates = (x, y)
-        g.draw(surface)
+        for g_index in list(self.candidates):
+            g = self.candidates[g_index]
+            g.draw(surface)
+        c_value_grid = self.candidates[self.current_value]
+        rect = pygame.Rect(c_value_grid.coordinates[0], c_value_grid.coordinates[1], Grid.SIZE, Grid.SIZE)
+        pygame.draw.rect(surface, Board.COLOR_LINE, rect, 3)
 
 
 class Window:
